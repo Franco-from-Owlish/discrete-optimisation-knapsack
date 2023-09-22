@@ -1,47 +1,45 @@
 from collections import namedtuple
-from typing import Any
+from typing import List
+import numpy as np
 
-class Knapsack:
-    def __init__(self, items: namedtuple, capacity: int) -> None:
-        self._items = items
-        self.capacity = capacity
-        self.w = [0] * len(self._items)
-        self.v = [0] * len(self._items)
-        self.wj()
+Item = namedtuple("Item", ['index', 'value', 'weight'])
 
-    def wj(self) -> None:
-        for item in self._items:
-            self.w[item.index] = item.weight
-            self.v[item.index] = item.value
+def dynamic_programming(items: List[Item], capacity: int) -> (List[Item], int):
+    """
+    Dynamic programming solution.
+    @param items The items that can be added
+    @param apacity Capacity of the knapsack
+    @retuns items, value The items taken and the total value
+    """
+    items_taken: List[Item] = []
+    value = 0
 
-class Oracle:
-    def __init__(self) -> None:
-        self._o = [[0]]
+    o = np.zeros(shape=(capacity, len(items)))
+
+    def O(k: int, j: int) -> int:
+        """
+        Calculate o at a given capacity and item.
+        @param k capacity
+        @param j item index
+        """
+        if o[k][j] != 0:
+            return o[k][j]
+        if j == 0:
+            return 0
+        elif items[j].weight <= k:
+            not_taken = O(k, j-1)
+            taken = items[j].value + O(k - items[j].weight, j - 1)
+
+            o[k][j-1] = not_taken
+            o[k][j] = taken
+
+            if taken > not_taken:
+                items_taken.push(items[j])
+                return taken
+            return not_taken
+        else:
+            return O(k, j - 1)
         
-    def __call__(self, k: int, j: int) -> int | None:
-        try:
-            return self._o[k][j]
-        except IndexError:
-            return None
-
-        
-oracle = Oracle()
-
-def O(knapsack: Knapsack, k: int, j:int) -> int: 
-    global oracle
-    if j == 0:
-        return 0
-    elif knapsack.w[j] <= k:
-        return max(
-            oracle(k, j-1) or O(knapsack, k, j-1),
-            knapsack.v[j] + oracle(k - knapsack.w[j], j) or O(knapsack, k - knapsack.w[j], j)
-        )
-    else:
-        oracle(k, j-1) or O(knapsack, k, j-1)
-
-
-def main(items: namedtuple, capacity: int):
-    global oracle
-    knapsack = Knapsack(items, capacity)
-    oracle = Oracle()
-
+    O(capacity, len(items))
+    
+    return items_taken, value

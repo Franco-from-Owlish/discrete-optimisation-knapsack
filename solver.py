@@ -1,8 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from collections import namedtuple
-Item = namedtuple("Item", ['index', 'value', 'weight'])
+from solutions import (
+    base,
+    dynamic_programming,
+)
+from stubs import Item
 
 def solve_it(input_data):
     # Modify this code to run your optimization algorithm
@@ -21,17 +24,8 @@ def solve_it(input_data):
         parts = line.split()
         items.append(Item(i-1, int(parts[0]), int(parts[1])))
 
-    # a trivial algorithm for filling the knapsack
-    # it takes items in-order until the knapsack is full
-    value = 0
-    weight = 0
-    taken = [0]*len(items)
-
-    for item in items:
-        if weight + item.weight <= capacity:
-            taken[item.index] = 1
-            value += item.value
-            weight += item.weight
+    taken, value = base(items, capacity)
+    # taken, value = dynamic_programming(items, capacity)
     
     # prepare the solution in the specified output format
     output_data = str(value) + ' ' + str(0) + '\n'
