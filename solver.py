@@ -4,6 +4,7 @@
 from solutions import (
     base,
     dynamic_programming,
+    greedy
 )
 from stubs import Item
 
@@ -24,8 +25,9 @@ def solve_it(input_data):
         parts = line.split()
         items.append(Item(i-1, int(parts[0]), int(parts[1])))
 
-    taken, value = base(items, capacity)
-    # taken, value = dynamic_programming(items, capacity)
+    # taken, value = base(items, capacity)
+    # taken, value = greedy(items, capacity)
+    taken, value = dynamic_programming(items, capacity)
     
     # prepare the solution in the specified output format
     output_data = str(value) + ' ' + str(0) + '\n'
