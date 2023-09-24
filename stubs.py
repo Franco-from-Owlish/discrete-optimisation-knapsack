@@ -1,3 +1,7 @@
-from collections import namedtuple
+from typing import NamedTuple
 
-Item = namedtuple("Item", ['index', 'value', 'weight'])
+
+class Item(NamedTuple):
+    index: int
+    value: int
+    weight: int

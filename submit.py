@@ -8,32 +8,11 @@ import time
 import os
 from collections import namedtuple
 
-
-# Python 2/3 compatibility
-# Python 2:
-try:
-    from urlparse import urlparse
-    from urllib import urlencode
-    from urllib2 import urlopen, Request, HTTPError
-except:
-    pass
-
-# Python 3:
-try:
-    from time import process_time
-    from urllib.parse import urlparse, urlencode
-    from urllib.request import urlopen, Request
-    from urllib.error import HTTPError
-except:
-    pass
-
+from time import process_time
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError
 import sys
-# Python 2:
-if sys.version_info < (3, 0):
-    def process_time():
-        return time.clock()
-    def input(str):
-        return raw_input(str)
+
 
 # Python 3, backward compatibility with unicode test
 if sys.version_info >= (3, 0):
@@ -48,7 +27,7 @@ Part = namedtuple("Part", ['id', 'input_file', 'solver_file', 'name'])
 
 
 def load_metadata(metadata_file_name='_coursera'):
-    '''
+    """
     Parses an assignment metadata file
 
     Args:
@@ -56,7 +35,7 @@ def load_metadata(metadata_file_name='_coursera'):
 
     Returns:
         metadata as a named tuple structure
-    '''
+    """
 
     if not os.path.exists(metadata_file_name):
         print('metadata file "%s" not found' % metadata_file_name)
@@ -137,18 +116,18 @@ def part_prompt(problems):
 
 
 def compute(metadata, solver_file_override=None):
-    '''
+    """
     Determines which assignment parts the student would like to submit.
     Then computes his/her answers to those assignment parts
 
     Args:
         metadata:  the assignment metadata
-        solver_file_override:  an optional model file to override the metadata 
+        solver_file_override:  an optional model file to override the metadata
             default
 
     Returns:
         a dictionary of results in the format Coursera expects
-    '''
+    """
 
     if solver_file_override is not None:
         print('Overriding solver file with: '+solver_file_override)
@@ -239,24 +218,23 @@ def output(input_file, solver_file):
     return solution.strip() + '\n' + str(end - start)
 
 
-def login_dialog(assignment_key, results, credentials_file_location = '_credentials'):
-    '''
-    Requests Coursera login credentials from the student and submits the 
+def login_dialog(assignment_key, results, credentials_file_location='_credentials'):
+    """
+    Requests Coursera login credentials from the student and submits the
     student's solutions for grading
 
     Args:
         assignment_key: Coursera's assignment key
         results: a dictionary of results in Cousera's format
-        credentials_file_location: a file location where login credentials can 
+        credentials_file_location: a file location where login credentials can
             be found
-    '''
+    """
 
     success = False
     tries = 0
 
     while not success:
-
-        # stops infinate loop when credentials file is incorrect 
+        # stops infinite loop when credentials file is incorrect
         if tries <= 0:
             login, token = login_prompt(credentials_file_location)
         else:
@@ -265,7 +243,7 @@ def login_dialog(assignment_key, results, credentials_file_location = '_credenti
         code, response = submit_solution(assignment_key, login, token, results)
 
         print('\n== Coursera Response ...')
-        #print(code)
+
         print(response)
         
         if code != 401:
@@ -274,12 +252,13 @@ def login_dialog(assignment_key, results, credentials_file_location = '_credenti
             print('\ntry logging in again')
         tries += 1
 
+
 def login_prompt(credentials_file_location):
-    '''
+    """
     Attempts to load credentials from a file, if that fails asks the user.
     Returns:
         the user's login and token
-    '''
+    """
     
     if os.path.isfile(credentials_file_location):
         try:
@@ -295,11 +274,11 @@ def login_prompt(credentials_file_location):
 
 
 def basic_prompt():
-    '''
-    Prompt the user for login credentials. 
+    """
+    Prompt the user for login credentials.
     Returns:
         the user's login and token
-    '''
+    """
     login = input('User Name (e-mail address): ')
     token = input('Submission Token (from the assignment page): ')
     return login, token
@@ -393,7 +372,7 @@ def main(args):
         return
 
     # store submissions if requested
-    if args.record_submission == True:
+    if args.record_submission:
         print('Recording submission as files')
         for sid, submission in results.items():
             if 'output' in submission:
@@ -416,16 +395,15 @@ def main(args):
         login_dialog(metadata.assignment_key, results, args.credentials)
 
 
-
 import argparse
+
 def build_parser():
-    '''
+    """
     Builds an argument parser for the CLI
 
     Returns:
         parser: an argparse parser
-    '''
-
+    """
     parser = argparse.ArgumentParser(
         description='''The submission script for Discrete Optimization 
             assignments on the Coursera Platform.''',

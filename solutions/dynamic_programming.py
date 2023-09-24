@@ -1,51 +1,56 @@
-from collections import namedtuple
 from typing import List
+
 import numpy as np
 
 from stubs import Item
 
+
 def dynamic_programming(items: List[Item], capacity: int) -> (List[Item], int):
     """
     Dynamic programming solution.
-    @param items The items that can be added
-    @param apacity Capacity of the knapsack
-    @retuns items, value The items taken and the total value
+    @param items: The items that can be added
+    @param capacity: Capacity of the knapsack
+    @returns items, value The items taken and the total value
     """
-    items_taken = [0]*len(items)
+    items_taken = [0] * len(items)
     value = 0
 
-    o = {}
+    o = np.ndarray((capacity + 1, len(items) + 1), dtype=int)
 
-    def O(k: int, j: int) -> int:
+    def oracle(k: int, j: int) -> int:
         """
-        Calculate o at a given capacity and item.
+        Calculate o for a given capacity and item.
         @param k capacity
         @param j item index
         """
-        if k in o and j in o[k]:
+        if o[k][j] != 0:
             return o[k][j]
         if j == 0:
             return 0
-        elif items[j-1].weight <= k:
-            not_taken = O(k, j-1)
-            taken = items[j-1].value + O(k - items[j-1].weight, j - 1)
+        elif items[j - 1].weight <= k:
+            not_taken = oracle(k, j - 1)
+            taken = items[j - 1].value + oracle(k - items[j - 1].weight, j - 1)
 
-            if k not in o:
-                o[k] = {}
-            o[k][j-1] = not_taken
-            o[k][j] = taken
-
-            print(f"k={k}, j={j}, item={items[j-1]}, taken={taken}, not_taken={not_taken}")
-
-            if taken >= not_taken:
-                items_taken[items[j-1].index] = 1
-                return taken
-            return not_taken
+            o_kj = max(taken, not_taken)
+            o[k, j] = o_kj
+            return o_kj
         else:
-            return O(k, j - 1)
-        
-    value = O(capacity, len(items))
+            return oracle(k, j - 1)
 
-    print(o)
-    
+    for k in range(capacity + 1):
+        value = oracle(k, len(items))
+
+    k = capacity
+    for j in range(len(items), 0, -1):
+        if o[k, j] != o[k, j - 1]:
+            items_taken[items[j-1].index] = 1
+            k -= items[j - 1].weight
+
+    # validate
+    total_value = 0
+    for idx, chosen in enumerate(items_taken):
+        total_value += chosen * items[idx].value
+
+    assert total_value == value
+
     return items_taken, value
