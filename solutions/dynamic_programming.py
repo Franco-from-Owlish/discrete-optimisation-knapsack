@@ -24,7 +24,7 @@ def dynamic_programming(items: List[Item], capacity: int) -> (List[Item], int):
         @param j item index
         """
         if o[k][j] != 0:
-            return o[k][j]
+            return int(o[k][j])
         if j == 0:
             return 0
         elif items[j - 1].weight <= k:

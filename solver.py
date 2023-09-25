@@ -15,9 +15,9 @@ def solve_it(input_data):
     # parse the input
     lines = input_data.split('\n')
 
-    firstLine = lines[0].split()
-    item_count = int(firstLine[0])
-    capacity = int(firstLine[1])
+    first_line = lines[0].split()
+    item_count = int(first_line[0])
+    capacity = int(first_line[1])
 
     items = []
 
@@ -26,9 +26,12 @@ def solve_it(input_data):
         parts = line.split()
         items.append(Item(i-1, int(parts[0]), int(parts[1])))
 
-    # taken, value = base(items, capacity)
-    # taken, value = greedy(items, capacity)
-    taken, value = dynamic_programming(items, capacity)
+    if capacity < 300:
+        taken, value = dynamic_programming(items, capacity)
+    elif capacity < 600:
+        taken, value = greedy(items, capacity)
+    else:
+        taken, value = base(items, capacity)
     
     # prepare the solution in the specified output format
     output_data = str(value) + ' ' + str(0) + '\n'
