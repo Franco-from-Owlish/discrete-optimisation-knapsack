@@ -1,7 +1,8 @@
 from typing import List
 from stubs import Item
 
-def base(items: List[Item], capacity: int) -> (List[Item], int):
+
+def base(items: List[Item], capacity: int) -> (List[int], int):
     # a trivial algorithm for filling the knapsack
     # it takes items in-order until the knapsack is full
     value = 0

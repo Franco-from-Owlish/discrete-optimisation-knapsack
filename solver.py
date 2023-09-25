@@ -26,12 +26,10 @@ def solve_it(input_data):
         parts = line.split()
         items.append(Item(i-1, int(parts[0]), int(parts[1])))
 
-    if capacity < 300:
+    if capacity < 5000000:
         taken, value = dynamic_programming(items, capacity)
-    elif capacity < 600:
-        taken, value = greedy(items, capacity)
     else:
-        taken, value = base(items, capacity)
+        taken, value = greedy(items, capacity)
     
     # prepare the solution in the specified output format
     output_data = str(value) + ' ' + str(0) + '\n'
@@ -47,5 +45,6 @@ if __name__ == '__main__':
             input_data = input_data_file.read()
         print(solve_it(input_data))
     else:
-        print('This test requires an input file.  Please select one from the data directory. (i.e. python solver.py ./data/ks_4_0)')
+        print('This test requires an input file.  Please select one from the data directory. (i.e. python solver.py '
+              './data/ks_4_0)')
 

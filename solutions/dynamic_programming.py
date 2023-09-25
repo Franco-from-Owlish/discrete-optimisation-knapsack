@@ -5,7 +5,7 @@ import numpy as np
 from stubs import Item
 
 
-def dynamic_programming(items: List[Item], capacity: int) -> (List[Item], int):
+def dynamic_programming(items: List[Item], capacity: int) -> (List[int], int):
     """
     Dynamic programming solution.
     @param items: The items that can be added
