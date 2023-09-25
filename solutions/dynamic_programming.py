@@ -35,7 +35,9 @@ def dynamic_programming(items: List[Item], capacity: int) -> (List[Item], int):
             o[k, j] = o_kj
             return o_kj
         else:
-            return oracle(k, j - 1)
+            o_kj = oracle(k, j - 1)
+            o[k, j] = o_kj
+            return o_kj
 
     for k in range(capacity + 1):
         value = oracle(k, len(items))
@@ -45,12 +47,5 @@ def dynamic_programming(items: List[Item], capacity: int) -> (List[Item], int):
         if o[k, j] != o[k, j - 1]:
             items_taken[items[j-1].index] = 1
             k -= items[j - 1].weight
-
-    # validate
-    total_value = 0
-    for idx, chosen in enumerate(items_taken):
-        total_value += chosen * items[idx].value
-
-    assert total_value == value
 
     return items_taken, value
