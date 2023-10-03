@@ -1,6 +1,15 @@
-# Python 
+# System
+*.DS_Store
+
+# Python
 env
-*__pycache__
+**__pycache__
+
+
+# IDE
+.idea
+.vscode
 
 # Coursera
 _coursera
+_credentials

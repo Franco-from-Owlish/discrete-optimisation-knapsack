@@ -4,7 +4,8 @@
 from solutions import (
     base,
     dynamic_programming,
-    greedy
+    greedy,
+    branch_and_bound
 )
 from stubs import Item
 
@@ -26,10 +27,14 @@ def solve_it(input_data):
         parts = line.split()
         items.append(Item(i-1, int(parts[0]), int(parts[1])))
 
-    if capacity < 5000000:
-        taken, value = dynamic_programming(items, capacity)
-    else:
-        taken, value = greedy(items, capacity)
+    taken, value = branch_and_bound(items, capacity)
+
+    # if capacity < 5000000:
+    #     taken, value = dynamic_programming(items, capacity)
+    # elif capacity < 10000000:
+    #     taken, value = branch_and_bound(items, capacity)
+    # else:
+    #     taken, value = greedy(items, capacity)
     
     # prepare the solution in the specified output format
     output_data = str(value) + ' ' + str(0) + '\n'

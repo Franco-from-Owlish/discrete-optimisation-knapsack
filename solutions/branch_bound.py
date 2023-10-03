@@ -51,7 +51,7 @@ def linear_relaxation_bound(items: List[Item], capacity: int) -> int:
     return bound
 
 
-def bound_and_bound(items: List[Item], capacity: int) -> (List[int], int):
+def branch_and_bound(items: List[Item], capacity: int) -> (List[int], int):
     bound = linear_relaxation_bound(items, capacity)
     root = Node(
         remaining_capacity=capacity,
@@ -62,13 +62,19 @@ def bound_and_bound(items: List[Item], capacity: int) -> (List[int], int):
 
     def create_tree(node: Node, index: int):
         node.set_children(items[index])
-        if index < len(items):
-            node.left.set_children(items[index+1])
-            node.right.set_children(items[index+1])
+        if index < len(items)-1:
+            create_tree(node.left, index+1)
+            create_tree(node.right, index+1)
 
     def dept_first(node):
         if node and not node.end(bound):
+            print(f"{node.index}: {node.total_value}")
             dept_first(node.left)
             dept_first(node.right)
+
+    create_tree(root, 0)
+    dept_first(root)
+
+
 
 
