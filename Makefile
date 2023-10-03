@@ -4,6 +4,9 @@ class1:
 class2:
 	python3 solver.py data/ks_lecture_dp_2
 
+bb:
+	python3 solver.py data/ks_lecture_bb_1
+
 small:
 	python3 solver.py data/ks_4_0
 
@@ -27,3 +30,6 @@ kp5:
 
 kp6:
 	python3 solver.py data/ks_10000_0
+
+submit:
+	bash submit.sh
