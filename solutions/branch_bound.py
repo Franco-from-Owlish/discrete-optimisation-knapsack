@@ -1,4 +1,4 @@
-from typing import List, Optional, TypeVar
+from typing import List, Optional, TypeVar, Any
 
 from stubs import Item
 
@@ -29,7 +29,7 @@ class Node:
             remaining_capacity=self.remaining_capacity - item.weight,
             total_value=self.total_value + item.value,
             estimate=self.estimate,
-            item_index=item.index,
+            item_index=item.index + 1,
             taken=True,
             parent=self
         )
@@ -39,7 +39,7 @@ class Node:
             estimate=self.estimate - (item.value
                                       if consumed_capacity is None
                                       else consumed_capacity),
-            item_index=item.index,
+            item_index=item.index + 1,
             taken=False,
             parent=self
         )
@@ -81,19 +81,20 @@ def branch_and_bound(items: List[Item], capacity: int) -> (List[int], int):
     )
     highest_value_node = root
 
-    def create_tree(node: Node, index: int):
-        node.set_children(items[index], consumed_capacity=consumed_capacities[items[index].index])
-        if index < len(items) - 1:
-            create_tree(node.left, index + 1)
-            create_tree(node.right, index + 1)
-
     def dept_first(node):
         nonlocal value, highest_value_node  # bind to outer scope
+        if not node:
+            return
 
-        if node and not node.end(value):
+        if not node.end(value):
             value = max(node.total_value, value)
             if node.total_value > highest_value_node.total_value:
                 highest_value_node = node
+            if node.left is None:
+                node.set_children(
+                    items[node.index],
+                    consumed_capacity=consumed_capacities[items[node.index].index]
+                )
             dept_first(node.left)
             dept_first(node.right)
 
@@ -105,7 +106,6 @@ def branch_and_bound(items: List[Item], capacity: int) -> (List[int], int):
             node = node.parent
         return taken
 
-    create_tree(root, 0)
     dept_first(root)
 
     return items_taken(), highest_value_node.total_value
