@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from solutions import (
-    base,
     dynamic_programming,
     greedy,
-    branch_and_bound
+    branch_and_bound,
 )
 from stubs import Item
 
@@ -29,12 +28,10 @@ def solve_it(input_data):
 
     optimised = False
 
-    # taken, value = branch_and_bound(items, capacity)
-
     if capacity < 500000:
         taken, value = dynamic_programming(items, capacity)
         optimised = True
-    elif capacity < 10000000:
+    elif item_count < 400:
         taken, value = branch_and_bound(items, capacity)
         optimised = True
     else:

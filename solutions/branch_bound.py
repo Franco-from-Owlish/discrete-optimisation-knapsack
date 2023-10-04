@@ -1,4 +1,4 @@
-from typing import List, Optional, TypeVar, Any
+from typing import List, Optional, TypeVar
 
 from stubs import Item
 
@@ -30,8 +30,7 @@ class Node:
             total_value=self.total_value + item.value,
             estimate=self.estimate,
             item_index=item.index + 1,
-            taken=True,
-            parent=self
+            taken=True
         )
         self.right = Node(
             remaining_capacity=self.remaining_capacity,
@@ -40,8 +39,7 @@ class Node:
                                       if consumed_capacity is None
                                       else consumed_capacity),
             item_index=item.index + 1,
-            taken=False,
-            parent=self
+            taken=False
         )
 
     def end(self, best_estimate: int) -> bool:
@@ -72,6 +70,7 @@ def linear_relaxation_bound(items: List[Item], capacity: int) -> (int, List[floa
 
 def branch_and_bound(items: List[Item], capacity: int) -> (List[int], int):
     value = 0
+    items_taken = [0] * len(items)
     bound, consumed_capacities = linear_relaxation_bound(items, capacity)
     root = Node(
         remaining_capacity=capacity,
@@ -90,6 +89,7 @@ def branch_and_bound(items: List[Item], capacity: int) -> (List[int], int):
             value = max(node.total_value, value)
             if node.total_value > highest_value_node.total_value:
                 highest_value_node = node
+                items_taken[highest_value_node.index] = int(highest_value_node.taken)
             if node.left is None:
                 node.set_children(
                     items[node.index],
@@ -98,14 +98,6 @@ def branch_and_bound(items: List[Item], capacity: int) -> (List[int], int):
             dept_first(node.left)
             dept_first(node.right)
 
-    def items_taken():
-        taken = [0] * len(items)
-        node = highest_value_node
-        while node.parent is not None:
-            taken[node.index] = int(node.taken)
-            node = node.parent
-        return taken
-
     dept_first(root)
 
-    return items_taken(), highest_value_node.total_value
+    return items_taken, highest_value_node.total_value
